@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space Studio | Beatstoria AI</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Sans:wght@400;700&family=Oswald:wght@300;500;700&family=Poppins:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;900&family=Saira+Condensed:wght@400;700;900&family=Righteous&family=Permanent+Marker&family=Merriweather:wght@400;900&family=Pacifico&display=swap" rel="stylesheet" crossorigin="anonymous">
+    <!-- Link ini memuat ribuan icon sekaligus agar siap dipakai -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+    <!-- PDF.js for Space NoteLM -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+      // Global PDF.js config
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+      }
+    </script>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Montserrat', 'sans-serif'],
+              montserrat: ['Montserrat', 'sans-serif'],
+              poppins: ['Poppins', 'sans-serif'],
+              noto: ['Noto Sans', 'sans-serif'],
+              roboto: ['Roboto', 'sans-serif'],
+              oswald: ['Oswald', 'sans-serif'],
+              bebas: ['Bebas Neue', 'sans-serif'],
+              anton: ['Anton', 'sans-serif'],
+              saira: ['Saira Condensed', 'sans-serif'],
+              righteous: ['Righteous', 'cursive'],
+              marker: ['Permanent Marker', 'cursive'],
+              merriweather: ['Merriweather', 'serif'],
+              pacifico: ['Pacifico', 'cursive'],
+            },
+            colors: {
+              studio: {
+                black: '#050505',
+                dark: '#0a0a0a',
+                border: '#1a1a1a',
+                accent: '#3b82f6',
+                contrast: '#ffffff'
+              }
+            },
+            animation: {
+              'spin-slow': 'spin 12s linear infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow: hidden;
+      }
+      
+      /* Supress Hovers during Navigation/Dragging */
+      body.is-navigating .hover-target,
+      body.is-navigating .selectable-layer,
+      body.is-navigating .react-rnd:hover {
+        outline: none !important;
+        border-color: transparent !important;
+        ring: 0 !important;
+        box-shadow: none !important;
+      }
+      
+      body.is-navigating * {
+        pointer-events: none !important;
+      }
+      
+      body.is-navigating .navigation-canvas-wrapper {
+        pointer-events: auto !important;
+      }
+
+      /* Cursor Industry Standards */
+      .cursor-grab { cursor: grab !important; }
+      .cursor-grabbing { cursor: grabbing !important; }
+      
+      /* Refined Scrollbar UX - Light Mode (Default) */
+      .custom-scrollbar::-webkit-scrollbar { 
+        width: 8px; 
+        height: 8px; 
+      }
+      .custom-scrollbar::-webkit-scrollbar-track { 
+        background: transparent; 
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb { 
+        background-color: rgba(0, 0, 0, 0.2); 
+        border-radius: 20px; 
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: background 0.3s ease; 
+      }
+      .custom-scrollbar:hover::-webkit-scrollbar-thumb { 
+        background-color: rgba(0, 0, 0, 0.3); 
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+        background-color: rgba(0, 0, 0, 0.5) !important; 
+      }
+
+      /* Dark Mode Scrollbar (White Thumb) - Enhanced Visibility */
+      .dark-scrollbar::-webkit-scrollbar { 
+        width: 10px; 
+        height: 10px; 
+      }
+      .dark-scrollbar::-webkit-scrollbar-track { 
+        background: rgba(255, 255, 255, 0.02); 
+      }
+      .dark-scrollbar::-webkit-scrollbar-thumb { 
+        background-color: rgba(255, 255, 255, 0.3); 
+        border-radius: 5px; 
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: background-color 0.2s ease; 
+      }
+      .dark-scrollbar:hover::-webkit-scrollbar-thumb { 
+        background-color: rgba(255, 255, 255, 0.5); 
+      }
+      .dark-scrollbar::-webkit-scrollbar-thumb:hover { 
+        background-color: rgba(255, 255, 255, 0.7) !important; 
+      }
+
+      /* PREMIUM COLORED STUDIO SCROLLBAR (Request: "scrool bar kecil berwarna") */
+      /* Adjusted width to 8px for better cursor grabbing */
+      .studio-scrollbar::-webkit-scrollbar { 
+        width: 8px; 
+        height: 8px; 
+      }
+      .studio-scrollbar::-webkit-scrollbar-track { 
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+      }
+      .studio-scrollbar::-webkit-scrollbar-thumb { 
+        background: linear-gradient(180deg, #6366f1, #a855f7); /* Indigo to Purple */
+        border-radius: 10px; 
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        border: 2px solid rgba(0, 0, 0, 0.2);
+      }
+      .studio-scrollbar::-webkit-scrollbar-thumb:hover { 
+        background: linear-gradient(180deg, #818cf8, #c084fc); 
+        width: 10px;
+      }
+
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+      
+      .checkerboard-bg {
+        background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      }
+
+      /* Progress Bar Pulse */
+      @keyframes pulse-fast {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+      }
+      .animate-pulse-fast { animation: pulse-fast 1.5s infinite ease-in-out; }
+
+      /* Dynamic Neural Flame Animation */
+      @keyframes neural-flame {
+        0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px rgba(234,179,8,0.6)); }
+        25% { transform: scale(1.15) rotate(-12deg) translateY(-2px); filter: drop-shadow(0 0 15px rgba(234,179,8,0.9)); }
+        50% { transform: scale(0.9) rotate(8deg) translateY(1px); filter: drop-shadow(0 0 8px rgba(234,179,8,0.7)); }
+        75% { transform: scale(1.25) rotate(-6deg) translateY(-3px); filter: drop-shadow(0 0 18px rgba(234,179,8,1)); }
+        100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px rgba(234,179,8,0.6)); }
+      }
+      .animate-neural-flame {
+        animation: neural-flame 1s infinite ease-in-out;
+      }
+
+      /* Vertical Range Input Styling */
+      .slider-vertical {
+        -webkit-appearance: slider-vertical;
+        appearance: slider-vertical;
+        width: 8px;
+        height: 100px;
+        background: transparent;
+        outline: none;
+      }
+
+      /* Hide spin buttons for number inputs globally */
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+
+      /* Smoke Animation Styles */
+      @keyframes smoke-rise {
+        0% { transform: translateY(0) scale(0.5); opacity: 0; }
+        20% { opacity: 0.4; }
+        100% { transform: translateY(-40px) scale(2); opacity: 0; }
+      }
+      .smoke-trail {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        filter: blur(4px);
+        pointer-events: none;
+        animation: smoke-rise 2.5s infinite ease-out;
+        z-index: 50;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.32.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "html-to-image": "https://aistudiocdn.com/html-to-image@^1.11.13",
+    "react-rnd": "https://esm.sh/react-rnd@10.4.13?external=react,react-dom",
+    "jszip": "https://aistudiocdn.com/jszip@^3.10.1",
+    "@imgly/background-removal": "https://esm.sh/@imgly/background-removal@1.5.5"
+  }
+}
+</script>
+</head>
+  <body class="bg-[#f3f4f6]">
+    <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('SW registered: ', registration);
+          }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

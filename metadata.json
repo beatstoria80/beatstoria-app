@@ -1,0 +1,7 @@
+{
+  "name": "Backup Dev Space Studio 15.8 | Beatstoria AI",
+  "description": "Premium neural content synthesis and design platform powered by Beatstoria AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
